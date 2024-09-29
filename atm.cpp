@@ -138,7 +138,7 @@ class Card {
 private:
     string cardNumber;
     string expiryDate;
-    int pin; // Added pin attribute
+    int pin; 
     Account* account;
 
 public:
@@ -398,15 +398,14 @@ void ReceiptPrinter::printReceipt(Transaction* transaction) {
     cout << "Timestamp: " << ctime(&(transaction->timestamp)) << endl;
 }
 
-// Main function to simulate ATM usage
 int main() {
-    // Create a bank instance
+    //Bank instance
     Bank bank("Sample Bank");
 
-    // Create an ATM instance
+    //ATM instance
     ATM atm("ATM1", "Main Street", &bank);
 
-    // Display start menu (admin or user mode)
+    // Display start menu
     atm.displayStartMenu();
 
     return 0;
