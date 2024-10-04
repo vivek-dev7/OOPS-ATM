@@ -161,6 +161,10 @@ public:
     string getCardNumber() {
         return cardNumber;
     }
+
+    void setPIN(int newPIN) {
+        pin = newPIN;
+    }
 };
 
 class Bank {
@@ -317,7 +321,7 @@ public:
 
     void displayMainMenu() {
         screen.displayMessage("Select transaction or eject card:");
-        vector<string> options = {"Withdraw", "Deposit", "Check Balance", "Eject Card"};
+        vector<string> options = {"Withdraw", "Deposit", "Check Balance", "Reset PIN", "Eject Card"};
         screen.displayOptions(options);
 
         int option = keypad.getInput();
@@ -337,9 +341,7 @@ public:
                 screen.displayMessage("Enter amount to withdraw in Rs:");
                 float amount = keypad.getAmount();
                 
-                // Create a Transaction for the withdrawal attempt
                 Transaction transaction("Withdrawal", amount);
-                // Attempt to withdraw and dispense cash
                 if (account->withdraw(amount) && cashDispenser.dispenseCash(amount)) {
                     transaction.execute(account);
                     receiptPrinter.printReceipt(&transaction);
@@ -359,13 +361,39 @@ public:
                 screen.displayMessage("Your balance is: ₹" + to_string(account->checkBalance()));
                 break;
             }
-            case 4: { // Eject Card
+            case 4: { // Reset PIN
+                resetPIN();
+                break;
+            }
+            case 5: { // Eject Card
                 ejectCard();
                 break;
             }
             default:
                 screen.displayMessage("Invalid option.");
                 break;
+        }
+    }
+
+    void resetPIN() {
+        screen.displayMessage("Enter your current PIN:");
+        int currentPIN = keypad.getInput();
+
+        if (currentCard->validatePIN(currentPIN)) {
+            screen.displayMessage("Enter new PIN:");
+            int newPIN = keypad.getInput();
+
+            screen.displayMessage("Confirm new PIN:");
+            int confirmPIN = keypad.getInput();
+
+            if (newPIN == confirmPIN) {
+                currentCard->setPIN(newPIN);  // Update the card's PIN
+                screen.displayMessage("PIN successfully changed.");
+            } else {
+                screen.displayMessage("PINs do not match. Reset process aborted.");
+            }
+        } else {
+            screen.displayMessage("Incorrect current PIN. Reset process aborted.");
         }
     }
 
